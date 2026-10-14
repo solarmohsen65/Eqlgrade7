@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>درک مفهوم معادله | پایه هفتم</title>
+<style>
+  :root {
+    --primary: #1e40af;
+    --primary-light: #3b82f6;
+    --success: #059669;
+    --success-bg: #d1fae5;
+    --error: #dc2626;
+    --error-bg: #fee2e2;
+    --warning: #d97706;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --focus: #2563eb;
+    --radius: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Tahoma", "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    padding: 20px 16px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 1.45rem;
+    margin-bottom: 6px;
+  }
+
+  header p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+  }
+
+  .timer-bar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+  }
+
+  .timer-display {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--primary);
+  }
+
+  .phase-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .phase-btn {
+    padding: 8px 14px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    min-height: 44px;
+  }
+
+  .phase-btn:hover, .phase-btn:focus {
+    border-color: var(--primary);
+    outline: 3px solid rgba(37,99,235,0.3);
+  }
+
+  .phase-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .phase-btn.done {
+    background: var(--success-bg);
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  section.phase {
+    display: none;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  section.phase.active { display: block; }
+
+  h2 {
+    color: var(--primary);
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 6px;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    margin: 16px 0 8px;
+    color: #1e3a8a;
+  }
+
+  .instruction {
+    background: #eff6ff;
+    border-right: 4px solid var(--primary);
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+  }
+
+  .note {
+    background: #fef3c7;
+    border-right: 4px solid var(--warning);
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 0.9rem;
+  }
+
+  /* Concrete: Balance Scale */
+  .scale-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .scale {
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+  }
+
+  .beam {
+    height: 12px;
+    background: #475569;
+    border-radius: 6px;
+    position: relative;
+    transition: transform 0.4s ease;
+    transform-origin: center;
+  }
+
+  .beam.left-heavy { transform: rotate(8deg); }
+  .beam.right-heavy { transform: rotate(-8deg); }
+  .beam.balanced { transform: rotate(0deg); }
+
+  .fulcrum {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 30px solid #334155;
+    margin: 0 auto;
+    position: relative;
+    top: -2px;
+  }
+
+  .pans {
+    display: flex;
+    justify-content: space-between;
+    margin-top: -8px;
+  }
+
+  .pan {
+    width: 45%;
+    min-height: 100px;
+    background: #f1f5f9;
+    border: 2px dashed #94a3b8;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .pan h4 {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .weights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    min-height: 50px;
+  }
+
+  .weight {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f59e0b;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    cursor: grab;
+    user-select: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .weight.box {
+    border-radius: 6px;
+    background: #8b5cf6;
+  }
+
+  .weight.unknown {
+    background: #0ea5e9;
+  }
+
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 12px 0;
+  }
+
+  button, .btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    min-height: 44px;
+    transition: background 0.2s;
+  }
+
+  button:hover, .btn:hover { background: var(--primary-light); }
+  button:focus, .btn:focus {
+    outline: 3px solid rgba(37,99,235,0.4);
+    outline-offset: 2px;
+  }
+
+  button.secondary {
+    background: #64748b;
+  }
+
+  button.success-btn {
+    background: var(--success);
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Pictorial */
+  .visual-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin: 16px 0;
+  }
+
+  .box-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .box {
+    width: 48px;
+    height: 48px;
+    border: 2px solid #6366f1;
+    background: #e0e7ff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .unit {
+    width: 28px;
+    height: 28px;
+    background: #fbbf24;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 2px;
+  }
+
+  .equation-visual {
+    font-size: 1.4rem;
+    text-align: center;
+    margin: 16px 0;
+    direction: ltr;
+    font-family: "Courier New", monospace;
+  }
+
+  /* Abstract */
+  .equation-input {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 0;
+    direction: ltr;
+  }
+
+  input[type="text"], input[type="number"] {
+    padding: 10px 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    width: 80px;
+    text-align: center;
+    min-height: 44px;
+  }
+
+  input:focus {
+    border-color: var(--focus);
+    outline: 3px solid rgba(37,99,235,0.25);
+  }
+
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    display: none;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--success-bg);
+    border: 1px solid var(--success);
+    color: #065f46;
+  }
+  .feedback.incorrect {
+    background: var(--error-bg);
+    border: 1px solid var(--error);
+    color: #991b1b;
+  }
+  .feedback.hint {
+    background: #fef3c7;
+    border: 1px solid var(--warning);
+    color: #92400e;
+  }
+
+  .question-card {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .question-card h4 {
+    margin-bottom: 10px;
+    color: var(--primary);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    min-height: 48px;
+    transition: border-color 0.2s;
+  }
+
+  .option:hover, .option:focus-within {
+    border-color: var(--primary-light);
+  }
+
+  .option input { width: 20px; height: 20px; accent-color: var(--primary); }
+
+  .progress {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .summary-box {
+    background: #ecfdf5;
+    border: 1px solid var(--success);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.2rem; }
+    .phase-btn { font-size: 0.8rem; padding: 6px 10px; }
+    .weight { width: 38px; height: 38px; font-size: 0.8rem; }
+    input[type="text"], input[type="number"] { width: 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>درک مفهوم معادله</h1>
+    <p>پایه هفتم · عبارت‌های جبری · رویکرد عینی–تصویری–انتزاعی</p>
+  </header>
+
+  <div class="timer-bar" role="region" aria-label="زمان‌بندی و مراحل">
+    <div class="timer-display" id="timerDisplay" aria-live="polite">زمان باقی‌مانده: ۳۰:۰۰</div>
+    <div class="phase-nav" role="navigation" aria-label="مراحل درس">
+      <button class="phase-btn active" data-phase="0" id="btn0">۱. عینی</button>
+      <button class="phase-btn" data-phase="1" id="btn1">۲. تصویری</button>
+      <button class="phase-btn" data-phase="2" id="btn2">۳. انتزاعی</button>
+      <button class="phase-btn" data-phase="3" id="btn3">۴. تمرین‌ها</button>
+      <button class="phase-btn" data-phase="4" id="btn4">۵. انتقال</button>
+    </div>
+  </div>
+
+  <!-- ========== PHASE 0: CONCRETE ========== -->
+  <section class="phase active" id="phase0" aria-labelledby="h-concrete">
+    <h2 id="h-concrete">مرحله عینی (Concrete) — ترازو و تعادل</h2>
+    <div class="instruction">
+      <strong>هدف:</strong> معادله یعنی دو طرف یک ترازو با هم برابر باشند. وقتی دو طرف وزن یکسانی داشته باشند، ترازو متعادل است.
+      <br>با اشیای واقعی (مهره، مکعب، یا وزنه) این کار را انجام دهید. این شبیه‌سازی دیجیتال جایگزین کامل تجربه فیزیکی نیست؛ در کلاس با ترازو واقعی هم تمرین کنید.
+    </div>
+
+    <h3>فعالیت: ترازوی تعادل</h3>
+    <p>سمت چپ یک جعبه‌ی ناشناخته (x) دارد. سمت راست چند وزنه. با اضافه یا کم کردن وزنه‌ها ترازو را متعادل کنید.</p>
+
+    <div class="scale-area">
+      <div class="scale">
+        <div class="beam balanced" id="beam"></div>
+        <div class="fulcrum"></div>
+        <div class="pans">
+          <div class="pan" id="leftPan">
+            <h4>سمت چپ (x)</h4>
+            <div class="weights" id="leftWeights"></div>
+          </div>
+          <div class="pan" id="rightPan">
+            <h4>سمت راست</h4>
+            <div class="weights" id="rightWeights"></div>
+          </div>
+        </div>
+      </div>
+
+      <p id="balanceStatus" style="font-weight:bold; font-size:1.1rem;">وضعیت: متعادل</p>
+
+      <div class="controls-row">
+        <button type="button" id="addLeft1" aria-label="افزودن ۱ به سمت چپ">+۱ چپ</button>
+        <button type="button" id="addRight1" aria-label="افزودن ۱ به سمت راست">+۱ راست</button>
+        <button type="button" id="addRight3" aria-label="افزودن ۳ به سمت راست">+۳ راست</button>
+        <button type="button" class="secondary" id="resetScale">بازنشانی</button>
+      </div>
+
+      <div class="note">
+        در مدل فیزیکی: جعبه‌ی ناشناخته را روی یک کفه بگذارید و با مهره‌های ۱ واحدی کفه دیگر را پر کنید تا تعادل برقرار شود. مقدار داخل جعبه همان «حل معادله» است.
+      </div>
+    </div>
+
+    <h3>سؤال مشاهده‌ای</h3>
+    <div class="question-card">
+      <p>اگر سمت چپ یک جعبه (x) و سمت راست ۵ مهره باشد و ترازو متعادل باشد، مقدار x چقدر است؟</p>
+      <div class="equation-input">
+        <label for="q0ans">x = </label>
+        <input type="number" id="q0ans" min="0" max="20" aria-label="پاسخ مقدار x">
+        <button type="button" id="checkQ0">بررسی</button>
+      </div>
+      <div class="feedback" id="fb0" role="alert"></div>
+    </div>
+
+    <div class="controls-row">
+      <button type="button" class="success-btn" id="goPhase1">مرحله بعدی: تصویری ←</button>
+    </div>
+  </section>
+
+  <!-- ========== PHASE 1: PICTORIAL ========== -->
+  <section class="phase" id="phase1" aria-labelledby="h-pictorial">
+    <h2 id="h-pictorial">مرحله تصویری (Pictorial) — رسم مدل</h2>
+    <div class="instruction">
+      همان مفهوم تعادل را با شکل و جعبه نشان می‌دهیم. هر جعبه = یک متغیر (x)، هر مربع کوچک = یک واحد.
+    </div>
+
+    <h3>مدل تصویری معادله x + 2 = 7</h3>
+    <div class="visual-box" id="pictorialDemo">
+      <div class="box-group">
+        <div class="box">x</div>
+        <span>+ ۲ واحد</span>
+        <div>
+          <span class="unit"></span><span class="unit"></span>
+        </div>
+      </div>
+      <div style="font-size:2rem; align-self:center;">=</div>
+      <div class="box-group">
+        <span>۷ واحد</span>
+        <div>
+          <span class="unit"></span><span class="unit"></span><span class="unit"></span><span class="unit"></span>
+          <span class="unit"></span><span class="unit"></span><span class="unit"></span>
+        </div>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin:12px 0;">اگر ۲ واحد را از هر دو طرف برداریم، یک جعبه باقی می‌ماند که برابر ۵ واحد است. پس x = ۵</p>
+
+    <h3>تمرین تصویری</h3>
+    <div class="question-card">
+      <p>معادله: x + ۳ = ۸</p>
+      <p>با حذف ۳ واحد از هر دو طرف، x برابر چند است؟</p>
+      <div class="equation-input">
+        <label for="q1ans">x = </label>
+        <input type="number" id="q1ans" min="0" max="20">
+        <button type="button" id="checkQ1">بررسی</button>
+      </div>
+      <div class="feedback" id="fb1" role="alert"></div>
+    </div>
+
+    <div class="question-card">
+      <p>معادله: ۲x = ۱۰ (دو جعبه یکسان = ۱۰ واحد)</p>
+      <p>هر جعبه چند واحد دارد؟</p>
+      <div class="equation-input">
+        <label for="q2ans">x = </label>
+        <input type="number" id="q2ans" min="0" max="20">
+        <button type="button" id="checkQ2">بررسی</button>
+      </div>
+      <div class="feedback" id="fb2" role="alert"></div>
+    </div>
+
+    <div class="controls-row">
+      <button type="button" class="secondary" id="backPhase0">→ بازگشت</button>
+      <button type="button" class="success-btn" id="goPhase2">مرحله بعدی: انتزاعی ←</button>
+    </div>
+  </section>
+
+  <!-- ========== PHASE 2: ABSTRACT ========== -->
+  <section class="phase" id="phase2" aria-labelledby="h-abstract">
+    <h2 id="h-abstract">مرحله انتزاعی (Abstract) — نماد و معادله</h2>
+    <div class="instruction">
+      حالا همان تعادل را با نمادهای ریاضی می‌نویسیم. علامت = یعنی دو طرف ارزش یکسان دارند.
+      هر حرف (مثل x) به همان جعبه‌ی ناشناخته اشاره می‌کند که در مرحله عینی دیدید.
+    </div>
+
+    <h3>پیوند سه مرحله</h3>
+    <div class="summary-box">
+      <p><strong>عینی:</strong> ترازو متعادل → دو کفه وزن برابر</p>
+      <p><strong>تصویری:</strong> جعبه + واحدها = تعداد واحدها</p>
+      <p><strong>انتزاعی:</strong> x + ۲ = ۷  ←  x نشان‌دهنده جعبه است، ۲ و ۷ نشان‌دهنده تعداد واحدها</p>
+    </div>
+
+    <h3>حل گام‌به‌گام</h3>
+    <div class="question-card">
+      <p>معادله: x − ۴ = ۹</p>
+      <p>برای پیدا کردن x چه عملی انجام می‌دهیم؟ (فکر کنید: چه چیزی ترازو را دوباره متعادل می‌کند؟)</p>
+      <div class="options" role="radiogroup" aria-label="گزینه عملیات">
+        <label class="option"><input type="radio" name="op1" value="add4"> اضافه کردن ۴ به هر دو طرف</label>
+        <label class="option"><input type="radio" name="op1" value="sub4"> کم کردن ۴ از هر دو طرف</label>
+        <label class="option"><input type="radio" name="op1" value="mul4"> ضرب در ۴</label>
+      </div>
+      <button type="button" id="checkOp1">بررسی</button>
+      <div class="feedback" id="fbOp1" role="alert"></div>
+    </div>
+
+    <div class="question-card">
+      <p>پس از انجام عملیات صحیح، مقدار x چقدر است؟</p>
+      <div class="equation-input">
+        <label for="q3ans">x = </label>
+        <input type="number" id="q3ans" min="-20" max="30">
+        <button type="button" id="checkQ3">بررسی</button>
+      </div>
+      <div class="feedback" id="fb3" role="alert"></div>
+    </div>
+
+    <div class="controls-row">
+      <button type="button" class="secondary" id="backPhase1">→ بازگشت</button>
+      <button type="button" class="success-btn" id="goPhase3">رفتن به تمرین‌ها ←</button>
+    </div>
+  </section>
+
+  <!-- ========== PHASE 3: PRACTICE (6 questions) ========== -->
+  <section class="phase" id="phase3" aria-labelledby="h-practice">
+    <h2 id="h-practice">تمرین‌های تعاملی (۶ سؤال)</h2>
+    <div class="instruction">
+      به هر سؤال پاسخ دهید. پس از هر پاسخ، بازخورد توضیحی دریافت می‌کنید. می‌توانید دوباره تلاش کنید.
+      از شما خواسته می‌شود روش خود را هم توضیح دهید.
+    </div>
+    <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="6" id="progressBarWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <p id="progressText">سؤال ۰ از ۶</p>
+
+    <div id="practiceArea"></div>
+
+    <div class="controls-row" style="margin-top:20px;">
+      <button type="button" class="secondary" id="backPhase2">→ بازگشت</button>
+      <button type="button" class="success-btn" id="goPhase4" disabled>رفتن به سؤال انتقالی ←</button>
+    </div>
+  </section>
+
+  <!-- ========== PHASE 4: TRANSFER ========== -->
+  <section class="phase" id="phase4" aria-labelledby="h-transfer">
+    <h2 id="h-transfer">سؤال انتقالی — کاربرد در موقعیت جدید</h2>
+    <div class="instruction">
+      این مسئله با موقعیت‌های قبلی فرق دارد. از آنچه یاد گرفته‌اید استفاده کنید و روش خود را توضیح دهید.
+    </div>
+
+    <div class="question-card">
+      <h4>مسئله</h4>
+      <p>علی ۳ برابر تعداد کتاب‌هایش را دارد به‌علاوه ۲ کتاب، و در مجموع ۱۴ کتاب دارد.</p>
+      <p>اگر تعداد کتاب‌های اولیه را با x نشان دهیم، معادله را بنویسید و مقدار x را پیدا کنید.</p>
+
+      <p style="margin-top:12px;"><strong>۱. معادله را بنویسید:</strong></p>
+      <div class="equation-input" style="direction:ltr;">
+        <input type="text" id="transEq" placeholder="مثلاً 3x+2=14" aria-label="معادله" style="width:180px;">
+        <button type="button" id="checkTransEq">بررسی معادله</button>
+      </div>
+      <div class="feedback" id="fbTransEq" role="alert"></div>
+
+      <p style="margin-top:16px;"><strong>۲. مقدار x:</strong></p>
+      <div class="equation-input">
+        <label for="transX">x = </label>
+        <input type="number" id="transX" min="0" max="20">
+        <button type="button" id="checkTransX">بررسی مقدار</button>
+      </div>
+      <div class="feedback" id="fbTransX" role="alert"></div>
+
+      <p style="margin-top:16px;"><strong>۳. روش خود را توضیح دهید:</strong></p>
+      <textarea id="transExplain" rows="3" style="width:100%; padding:10px; border:2px solid var(--border); border-radius:8px; font-family:inherit; resize:vertical;" placeholder="مثلاً: ابتدا ۲ را از هر دو طرف کم کردم..."></textarea>
+      <button type="button" id="saveExplain" style="margin-top:8px;">ثبت توضیح</button>
+      <div class="feedback" id="fbExplain" role="alert"></div>
+    </div>
+
+    <div class="summary-box" id="finalSummary" style="display:none;">
+      <h3>جمع‌بندی یادگیری</h3>
+      <ul style="padding-right:20px; margin-top:8px;">
+        <li>معادله بیان ریاضی تعادل دو طرف است.</li>
+        <li>مدل عینی (ترازو) → مدل تصویری (جعبه و واحد) → نماد (x و =)</li>
+        <li>عملیات معکوس روی هر دو طرف، تعادل را حفظ می‌کند.</li>
+        <li>همیشه روش خود را توضیح دهید تا درک مفهومی مشخص شود.</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>معیار موفقیت:</strong> بتوانید مفهوم را توضیح دهید، روش را توجیه کنید و در موقعیت جدید به کار گیرید.</p>
+    </div>
+
+    <div class="controls-row">
+      <button type="button" class="secondary" id="backPhase3">→ بازگشت به تمرین‌ها</button>
+      <button type="button" id="restartAll">شروع مجدد کل فعالیت</button>
+    </div>
+  </section>
+
+  <footer>
+    ابزار پشتیبان تدریس · جایگزین قضاوت حرفه‌ای دبیر نیست · طراحی برای کلاس ترکیبی پایه هفتم
+  </footer>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  // ========== Timer (30 min) ==========
+  let totalSeconds = 30 * 60;
+  let timerInterval = null;
+  const timerDisplay = document.getElementById("timerDisplay");
+
+  function updateTimer() {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    timerDisplay.textContent = "زمان باقی‌مانده: " + String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+    if (totalSeconds <= 0) {
+      clearInterval(timerInterval);
+      timerDisplay.textContent = "زمان تمام شد!";
+      timerDisplay.style.color = "#dc2626";
+    }
+    totalSeconds--;
+  }
+  timerInterval = setInterval(updateTimer, 1000);
+  updateTimer();
+
+  // ========== Phase navigation ==========
+  const phases = [0,1,2,3,4];
+  let currentPhase = 0;
+
+  function showPhase(n) {
+    phases.forEach(i => {
+      document.getElementById("phase" + i).classList.toggle("active", i === n);
+      const btn = document.getElementById("btn" + i);
+      btn.classList.toggle("active", i === n);
+      if (i < n) btn.classList.add("done");
+    });
+    currentPhase = n;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.querySelectorAll(".phase-btn").forEach(btn => {
+    btn.addEventListener("click", () => showPhase(parseInt(btn.dataset.phase, 10)));
+  });
+
+  document.getElementById("goPhase1").addEventListener("click", () => showPhase(1));
+  document.getElementById("goPhase2").addEventListener("click", () => showPhase(2));
+  document.getElementById("goPhase3").addEventListener("click", () => showPhase(3));
+  document.getElementById("goPhase4").addEventListener("click", () => showPhase(4));
+  document.getElementById("backPhase0").addEventListener("click", () => showPhase(0));
+  document.getElementById("backPhase1").addEventListener("click", () => showPhase(1));
+  document.getElementById("backPhase2").addEventListener("click", () => showPhase(2));
+  document.getElementById("backPhase3").addEventListener("click", () => showPhase(3));
+
+  // ========== Concrete Scale Logic ==========
+  let leftVal = 5;   // starts with unknown = 5 conceptually
+  let rightVal = 5;
+  const UNKNOWN = 5; // the "box" represents 5
+
+  function renderScale() {
+    const leftEl = document.getElementById("leftWeights");
+    const rightEl = document.getElementById("rightWeights");
+    leftEl.innerHTML = "";
+    rightEl.innerHTML = "";
+
+    // left always has one unknown box
+    const box = document.createElement("div");
+    box.className = "weight unknown";
+    box.textContent = "x";
+    box.title = "جعبه ناشناخته";
+    leftEl.appendChild(box);
+
+    // extra units on left if any (for demo we keep simple)
+    for (let i = 0; i < Math.max(0, leftVal - UNKNOWN); i++) {
+      const w = document.createElement("div");
+      w.className = "weight";
+      w.textContent = "۱";
+      leftEl.appendChild(w);
+    }
+
+    for (let i = 0; i < rightVal; i++) {
+      const w = document.createElement("div");
+      w.className = "weight";
+      w.textContent = "۱";
+      rightEl.appendChild(w);
+    }
+
+    const beam = document.getElementById("beam");
+    const status = document.getElementById("balanceStatus");
+    beam.classList.remove("left-heavy", "right-heavy", "balanced");
+    if (leftVal === rightVal) {
+      beam.classList.add("balanced");
+      status.textContent = "وضعیت: متعادل ✓";
+      status.style.color = "#059669";
+    } else if (leftVal > rightVal) {
+      beam.classList.add("left-heavy");
+      status.textContent = "وضعیت: سمت چپ سنگین‌تر";
+      status.style.color = "#d97706";
+    } else {
+      beam.classList.add("right-heavy");
+      status.textContent = "وضعیت: سمت راست سنگین‌تر";
+      status.style.color = "#d97706";
+    }
+  }
+
+  document.getElementById("addLeft1").addEventListener("click", () => {
+    leftVal += 1;
+    renderScale();
+  });
+  document.getElementById("addRight1").addEventListener("click", () => {
+    rightVal += 1;
+    renderScale();
+  });
+  document.getElementById("addRight3").addEventListener("click", () => {
+    rightVal += 3;
+    renderScale();
+  });
+  document.getElementById("resetScale").addEventListener("click", () => {
+    leftVal = 5;
+    rightVal = 5;
+    renderScale();
+  });
+  renderScale();
+
+  // Q0
+  document.getElementById("checkQ0").addEventListener("click", () => {
+    const ans = parseInt(document.getElementById("q0ans").value, 10);
+    const fb = document.getElementById("fb0");
+    fb.classList.add("show");
+    if (ans === 5) {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "درست! چون ترازو متعادل است، مقدار داخل جعبه (x) باید برابر تعداد مهره‌های سمت راست یعنی ۵ باشد. این همان مفهوم معادله است: x = ۵";
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "نادرست. وقتی ترازو متعادل است، دو طرف وزن یکسان دارند. سمت راست ۵ مهره دارد، پس x باید ۵ باشد. دوباره تلاش کنید.";
+    }
+  });
+
+  // ========== Pictorial ==========
+  document.getElementById("checkQ1").addEventListener("click", () => {
+    const ans = parseInt(document.getElementById("q1ans").value, 10);
+    const fb = document.getElementById("fb1");
+    fb.classList.add("show");
+    if (ans === 5) {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "درست! x + ۳ = ۸ → با کم کردن ۳ از هر دو طرف: x = ۵. حذف واحدهای یکسان از دو طرف تعادل را حفظ می‌کند.";
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "نادرست. از هر دو طرف ۳ واحد را بردارید. ۸ − ۳ = ۵، پس x = ۵. دوباره امتحان کنید.";
+    }
+  });
+
+  document.getElementById("checkQ2").addEventListener("click", () => {
+    const ans = parseInt(document.getElementById("q2ans").value, 10);
+    const fb = document.getElementById("fb2");
+    fb.classList.add("show");
+    if (ans === 5) {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "درست! دو جعبه یکسان برابر ۱۰ واحد است، پس هر جعبه ۵ واحد دارد: ۲x = ۱۰ → x = ۵";
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "نادرست. ۱۰ را به ۲ تقسیم کنید (چون دو جعبه مساوی داریم). ۱۰ ÷ ۲ = ۵. دوباره تلاش کنید.";
+    }
+  });
+
+  // ========== Abstract ==========
+  document.getElementById("checkOp1").addEventListener("click", () => {
+    const selected = document.querySelector('input[name="op1"]:checked');
+    const fb = document.getElementById("fbOp1");
+    fb.classList.add("show");
+    if (!selected) {
+      fb.className = "feedback show hint";
+      fb.innerHTML = "لطفاً یک گزینه را انتخاب کنید.";
+      return;
+    }
+    if (selected.value === "add4") {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "درست! چون ۴ از x کم شده، برای خنثی کردن، ۴ را به هر دو طرف اضافه می‌کنیم: x − ۴ + ۴ = ۹ + ۴ → x = ۱۳. این عملیات معکوس است.";
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "نادرست. در معادله x − ۴ = ۹، عدد ۴ از x کم شده. برای برگرداندن، باید ۴ را اضافه کنیم (عملیات معکوس). کم کردن دوباره ۴ وضعیت را بدتر می‌کند.";
+    }
+  });
+
+  document.getElementById("checkQ3").addEventListener("click", () => {
+    const ans = parseInt(document.getElementById("q3ans").value, 10);
+    const fb = document.getElementById("fb3");
+    fb.classList.add("show");
+    if (ans === 13) {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "عالی! x − ۴ = ۹ → x = ۱۳. هر نماد به بخشی از مدل اشاره دارد: x = جعبه ناشناخته، −۴ = برداشتن ۴ واحد، ۹ = سمت راست.";
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "نادرست. ۴ را به هر دو طرف اضافه کنید: ۹ + ۴ = ۱۳. پس x = ۱۳. دوباره تلاش کنید.";
+    }
+  });
+
+  // ========== Practice Questions (6) ==========
+  const questions = [
+    {
+      id: 1,
+      text: "کدام گزینه مفهوم معادله را بهتر بیان می‌کند؟",
+      type: "mc",
+      options: [
+        { v: "a", t: "یک عبارت جبری که فقط یک متغیر دارد" },
+        { v: "b", t: "تساوی دو عبارت که دو طرف ارزش یکسان دارند" },
+        { v: "c", t: "هر جمله‌ای که علامت + یا − دارد" }
+      ],
+      correct: "b",
+      explain: "معادله یعنی دو طرف با علامت = به هم وصل شده‌اند و ارزش برابر دارند (مثل ترازوی متعادل).",
+      wrong: "گزینه درست «تساوی دو عبارت» است. معادله فقط داشتن متغیر نیست؛ باید تعادل (تساوی) وجود داشته باشد."
+    },
+    {
+      id: 2,
+      text: "معادله x + ۵ = ۱۲ را حل کنید. x = ؟",
+      type: "num",
+      correct: 7,
+      explain: "۵ را از هر دو طرف کم می‌کنیم: x = ۱۲ − ۵ = ۷. این همان حذف واحدهای اضافی از دو طرف ترازو است.",
+      wrong: "۱۲ را منهای ۵ کنید. عملیات معکوس جمع، تفریق است."
+    },
+    {
+      id: 3,
+      text: "معادله ۳x = ۱۵. مقدار x چقدر است؟",
+      type: "num",
+      correct: 5,
+      explain: "هر دو طرف را بر ۳ تقسیم می‌کنیم: x = ۱۵ ÷ ۳ = ۵. سه جعبه مساوی برابر ۱۵ واحد → هر جعبه ۵.",
+      wrong: "۱۵ را بر ۳ تقسیم کنید. چون ضریب x برابر ۳ است."
+    },
+    {
+      id: 4,
+      text: "اگر ترازو متعادل باشد و سمت چپ x + ۲ و سمت راست ۹ باشد، معادله چیست؟",
+      type: "mc",
+      options: [
+        { v: "a", t: "x + ۲ = ۹" },
+        { v: "b", t: "x − ۲ = ۹" },
+        { v: "c", t: "x + ۹ = ۲" }
+      ],
+      correct: "a",
+      explain: "سمت چپ x+۲ و سمت راست ۹ و تعادل برقرار است → x + ۲ = ۹.",
+      wrong: "چون دو طرف برابرند، معادله x + ۲ = ۹ است."
+    },
+    {
+      id: 5,
+      text: "معادله x − ۶ = ۴ را حل کنید.",
+      type: "num",
+      correct: 10,
+      explain: "۶ را به هر دو طرف اضافه می‌کنیم: x = ۴ + ۶ = ۱۰. عملیات معکوس تفریق، جمع است.",
+      wrong: "۴ را با ۶ جمع کنید تا x پیدا شود."
+    },
+    {
+      id: 6,
+      text: "در معادله ۲x + ۱ = ۹، ابتدا چه کاری پیشنهاد می‌کنید؟",
+      type: "mc",
+      options: [
+        { v: "a", t: "هر دو طرف را بر ۲ تقسیم کنیم" },
+        { v: "b", t: "۱ را از هر دو طرف کم کنیم" },
+        { v: "c", t: "۲ را به هر دو طرف اضافه کنیم" }
+      ],
+      correct: "b",
+      explain: "بهتر است ابتدا عدد ثابت (۱) را حذف کنیم: ۲x = ۸، سپس تقسیم بر ۲. این ترتیب معمولاً ساده‌تر است.",
+      wrong: "ابتدا عدد ثابت را از دو طرف کم کنید تا به شکل ساده‌تر ۲x = ۸ برسید."
+    }
+  ];
+
+  let currentQ = 0;
+  let answeredCorrect = 0;
+  const practiceArea = document.getElementById("practiceArea");
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+
+  function updateProgress() {
+    const pct = (currentQ / questions.length) * 100;
+    progressBar.style.width = pct + "%";
+    progressText.textContent = "سؤال " + currentQ + " از " + questions.length;
+    document.getElementById("progressBarWrap").setAttribute("aria-valuenow", currentQ);
+    if (currentQ >= questions.length) {
+      document.getElementById("goPhase4").disabled = false;
+    }
+  }
+
+  function renderQuestion() {
+    if (currentQ >= questions.length) {
+      practiceArea.innerHTML = '<div class="summary-box"><p>همه ۶ سؤال را پاسخ دادید. می‌توانید به سؤال انتقالی بروید یا سؤال‌ها را مرور کنید.</p></div>';
+      updateProgress();
+      return;
+    }
+    const q = questions[currentQ];
+    let html = '<div class="question-card" id="qCard"><h4>سؤال ' + (currentQ + 1) + '</h4><p>' + q.text + '</p>';
+
+    if (q.type === "mc") {
+      html += '<div class="options" role="radiogroup">';
+      q.options.forEach(o => {
+        html += '<label class="option"><input type="radio" name="pq" value="' + o.v + '"> ' + o.t + '</label>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="equation-input"><label for="pAns">پاسخ: </label><input type="number" id="pAns" min="-50" max="100"><button type="button" id="checkP">بررسی</button></div>';
+    }
+
+    html += '<button type="button" id="checkP" style="margin-top:8px;">بررسی پاسخ</button>';
+    html += '<div class="feedback" id="fbP" role="alert"></div>';
+    html += '<div style="margin-top:12px;"><label for="method">روش خود را بنویسید (اختیاری اما توصیه‌شده):</label>';
+    html += '<textarea id="method" rows="2" style="width:100%;padding:8px;border:2px solid var(--border);border-radius:8px;margin-top:4px;"></textarea></div>';
+    html += '<button type="button" class="secondary" id="nextQ" style="margin-top:10px; display:none;">سؤال بعدی ←</button>';
+    html += '</div>';
+
+    practiceArea.innerHTML = html;
+
+    document.getElementById("checkP").addEventListener("click", checkPractice);
+    updateProgress();
+  }
+
+  function checkPractice() {
+    const q = questions[currentQ];
+    const fb = document.getElementById("fbP");
+    let userAns = null;
+    let isCorrect = false;
+
+    if (q.type === "mc") {
+      const sel = document.querySelector('input[name="pq"]:checked');
+      if (!sel) {
+        fb.className = "feedback show hint";
+        fb.innerHTML = "لطفاً یک گزینه را انتخاب کنید.";
+        return;
+      }
+      userAns = sel.value;
+      isCorrect = (userAns === q.correct);
+    } else {
+      const inp = document.getElementById("pAns");
+      userAns = parseInt(inp.value, 10);
+      if (isNaN(userAns)) {
+        fb.className = "feedback show hint";
+        fb.innerHTML = "لطفاً یک عدد وارد کنید.";
+        return;
+      }
+      isCorrect = (userAns === q.correct);
+    }
+
+    fb.classList.add("show");
+    if (isCorrect) {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "درست! " + q.explain;
+      answeredCorrect++;
+      document.getElementById("nextQ").style.display = "inline-block";
+      document.getElementById("checkP").disabled = true;
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "نادرست. " + q.wrong + " <br>می‌توانید دوباره تلاش کنید یا از راهنمایی استفاده کنید.";
+      // allow retry - do not disable
+    }
+
+    document.getElementById("nextQ").addEventListener("click", () => {
+      currentQ++;
+      renderQuestion();
+    }, { once: true });
+  }
+
+  renderQuestion();
+
+  // ========== Transfer ==========
+  function normalizeEq(s) {
+    return s.replace(/\s+/g, "").replace(/×/g, "*").toLowerCase();
+  }
+
+  document.getElementById("checkTransEq").addEventListener("click", () => {
+    const raw = document.getElementById("transEq").value;
+    const n = normalizeEq(raw);
+    const fb = document.getElementById("fbTransEq");
+    fb.classList.add("show");
+    const valid = ["3x+2=14", "2+3x=14", "3*x+2=14", "(3x)+2=14"];
+    if (valid.includes(n) || n === "3x+2=14") {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "درست! معادله ۳x + ۲ = ۱۴ مفهوم «۳ برابر به‌علاوه ۲ برابر ۱۴» را نشان می‌دهد.";
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "معادله باید چیزی شبیه ۳x + ۲ = ۱۴ باشد. «۳ برابر تعداد» یعنی ۳x و «به‌علاوه ۲» یعنی +۲ و «در مجموع ۱۴» یعنی = ۱۴.";
+    }
+  });
+
+  document.getElementById("checkTransX").addEventListener("click", () => {
+    const ans = parseInt(document.getElementById("transX").value, 10);
+    const fb = document.getElementById("fbTransX");
+    fb.classList.add("show");
+    if (ans === 4) {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "درست! ۳x + ۲ = ۱۴ → ۳x = ۱۲ → x = ۴. علی ابتدا ۴ کتاب داشته است.";
+      document.getElementById("finalSummary").style.display = "block";
+    } else {
+      fb.className = "feedback show incorrect";
+      fb.innerHTML = "نادرست. ابتدا ۲ را از هر دو طرف کم کنید: ۳x = ۱۲، سپس بر ۳ تقسیم کنید: x = ۴.";
+    }
+  });
+
+  document.getElementById("saveExplain").addEventListener("click", () => {
+    const t = document.getElementById("transExplain").value.trim();
+    const fb = document.getElementById("fbExplain");
+    fb.classList.add("show");
+    if (t.length < 10) {
+      fb.className = "feedback show hint";
+      fb.innerHTML = "لطفاً توضیح کوتاهی بنویسید (حداقل یک جمله). توضیح روش به درک مفهومی کمک می‌کند.";
+    } else {
+      fb.className = "feedback show correct";
+      fb.innerHTML = "توضیح شما ثبت شد. دبیر می‌تواند آن را بررسی کند. آفرین که روش خود را بیان کردید!";
+      document.getElementById("finalSummary").style.display = "block";
+    }
+  });
+
+  document.getElementById("restartAll").addEventListener("click", () => {
+    if (confirm("آیا می‌خواهید کل فعالیت از ابتدا شروع شود؟")) {
+      location.reload();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
